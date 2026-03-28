@@ -1,0 +1,93 @@
+version: 2
+
+sources:
+  - name: payments_postgres
+    description: PostgreSQL payments database source
+    database: payments
+    schema: payments_v1
+    tables:
+      - name: customers
+        description: Customer master data
+        columns:
+          - name: customer_id
+            description: Unique customer identifier
+            tests:
+              - unique
+              - not_null
+          - name: customer_type
+            description: Type of customer (individual/business)
+            tests:
+              - not_null
+          - name: email
+            description: Customer email address
+            tests:
+              - not_null
+          - name: kyc_status
+            description: KYC verification status
+          - name: created_at
+            description: Record creation timestamp
+
+      - name: transactions
+        description: Payment transactions
+        columns:
+          - name: transaction_id
+            description: Unique transaction identifier
+            tests:
+              - unique
+              - not_null
+          - name: amount
+            description: Transaction amount
+            tests:
+              - not_null
+          - name: currency
+            description: Currency code (ISO 4217)
+            tests:
+              - not_null
+          - name: status
+            description: Transaction status
+            tests:
+              - not_null
+          - name: payment_method_id
+            description: Foreign key to payment methods
+          - name: created_at
+            description: Transaction timestamp
+
+      - name: payment_methods
+        description: Customer payment methods
+        columns:
+          - name: payment_method_id
+            description: Unique payment method identifier
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: Foreign key to customers
+            tests:
+              - not_null
+          - name: method_type
+            description: Type of payment method
+            tests:
+              - not_null
+          - name: is_default
+            description: Whether this is the default method
+
+      - name: refunds
+        description: Transaction refunds
+        columns:
+          - name: refund_id
+            description: Unique refund identifier
+            tests:
+              - unique
+              - not_null
+          - name: original_transaction_id
+            description: Foreign key to original transaction
+            tests:
+              - not_null
+          - name: amount
+            description: Refund amount
+            tests:
+              - not_null
+          - name: status
+            description: Refund status
+            tests:
+              - not_null
